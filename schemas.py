@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 from pydantic import BaseModel, HttpUrl, ConfigDict, model_validator
-
+from loguru import logger
 
 class Author(BaseModel):
     name: str
@@ -66,7 +66,7 @@ class VPMPackageIndex(BaseModel):
         assert (
             package.name == next(iter(self.versions.values())).name
         ), "Package name must match existing versions"
-        print(f"INFO: Adding version {package.version} to package {package.name}")
+        logger.debug(f"Adding version {package.version} to package {package.name}")
         self.versions[package.version] = package
 
 
