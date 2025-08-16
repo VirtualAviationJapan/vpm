@@ -1,5 +1,5 @@
 from typing import Dict, Optional
-from pydantic import BaseModel, HttpUrl, ConfigDict
+from pydantic import BaseModel, HttpUrl, ConfigDict, model_validator
 
 
 class Author(BaseModel):
@@ -25,10 +25,11 @@ class VPMPackage(BaseModel):
         vpmDependencies (Dict[str, str]): Dependencies defined for the package, mapping package names to version constraints.
         zipSHA256 (Optional[str]): SHA256 hash of the package's zip archive.
         license (Optional[str]): License information for the package.
-        
+
     Note:
         Format is written on https://vcc.docs.vrchat.com/vpm/packages/#package-format
     """
+
     model_config = ConfigDict(extra="allow")  # allow extra fields
     # required fields for VPM
     name: str
@@ -51,10 +52,25 @@ class VPMPackage(BaseModel):
 class VPMPackageIndex(BaseModel):
     versions: Dict[str, VPMPackage]  # key: version
 
-class VPMRepository(BaseModel):
-    """
+    @model_validator(mode="after")
+    def check_names_consistency(self) -> "VPMPackageIndex":
+        names = {pkg.name for pkg in self.versions.values()}
+        if len(names) > 1:
+            raise ValueError(f"All VPMPackage.name must be the same, but got: {names}")
+        return self
 
-    """
+    def add_version(self, package: VPMPackage):
+        assert (
+            package.version not in self.versions
+        ), f"Version {package.version} already exists in index"
+        assert (
+            package.name == next(iter(self.versions.values())).name
+        ), "Package name must match existing versions"
+        print(f"INFO: Adding version {package.version} to package {package.name}")
+        self.versions[package.version] = package
+
+
+class VPMRepository(BaseModel):
     author: str
     name: str
     id: str
