@@ -1,14 +1,14 @@
 import sys
 from pathlib import Path
 
-from pydantic import ValidationError
+from pydantic import ValidationError, HttpUrl
 
 from schemas import VPMPackage, VPMPackageIndex, VPMRepository
 
 
 def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
     latest_packages = []
-    for pkg_latest_path in (search_dir).glob("*.json"):
+    for pkg_latest_path in search_dir.glob("*.json"):
         with pkg_latest_path.open("r") as f:
             pkg_latest_json = f.read()
             try:
@@ -25,28 +25,34 @@ def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
     return latest_packages
 
 
-def update_vpm_repo(vpm_path: Path, pkg_dir: Path) -> bool:
-    with open(vpm_path, "r") as f:
-        vpm_data = f.read()
-        try:
-            vpm = VPMRepository.model_validate_json(vpm_data)
-        except ValidationError as e:
-            print(sys.stderr, f"Error validating vpm.json: {str(e)}")
-            sys.exit(1)
-        latest_packages = read_latest_packages(pkg_dir)
-        for pkg in latest_packages:
-            if pkg.name not in vpm.packages:
-                print(f"INFO: Adding new package {pkg.name} to VPM repository")
-                vpm.packages[pkg.name] = VPMPackageIndex(versions={pkg.version: pkg})
-            else:
-                vpm.packages[pkg.name].add_version(pkg)
-    with open(vpm_path, "w") as f:
-        f.write(vpm.model_dump_json(indent=2))
-    return True
+def generate_vpm_repo(
+    pkg_dir: Path,
+    author: str = "VirtualAviationJapan",
+    name: str = "VirtualAviationJapan",
+    id: str = "jp.virtualaviation",
+    url: HttpUrl = HttpUrl("https://virtualaviationjapan.github.io/vpm/vpm.json"),
+) -> VPMRepository:
+    vpm = VPMRepository(author=author, name=name, id=id, url=url, packages={})
+    latest_packages = read_latest_packages(pkg_dir)
+    for pkg in latest_packages:
+        if pkg.name not in vpm.packages:
+            print(f"INFO: Adding new package {pkg.name} to VPM repository")
+            vpm.packages[pkg.name] = VPMPackageIndex(versions={pkg.version: pkg})
+        else:
+            vpm.packages[pkg.name].add_version(pkg)
+    return vpm
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Usage: uv run main.py <output>")
+        print("output are relative to the project directory")
+        sys.exit(1)
     project_dir = Path(__file__).resolve().parent
 
-    update_vpm_repo(project_dir / "vpm.json", project_dir / "packages")
-    print("INFO: VPM repository updated successfully")
+    vpm_repo = generate_vpm_repo(project_dir / "packages")
+    print(vpm_repo.model_dump_json(indent=2))
+    output_path = (project_dir / sys.argv[1]).resolve()
+    with open(output_path, "w") as f:
+        f.write(vpm_repo.model_dump_json(indent=2))
+    print(f"INFO: Updated VPM repository is {output_path}")
