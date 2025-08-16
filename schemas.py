@@ -4,7 +4,7 @@ from pydantic import BaseModel, HttpUrl, ConfigDict, model_validator
 
 class Author(BaseModel):
     name: str
-    email: str
+    email: Optional[str]
 
 
 class VPMPackage(BaseModel):
