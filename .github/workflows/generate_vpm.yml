@@ -1,0 +1,20 @@
+name: Generate VPM repository
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run main.py vpm.json
+      - uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: 'chore: update vpm.json'
