@@ -5,6 +5,7 @@ import zipfile
 
 import httpx
 from loguru import logger
+import json
 from pydantic import HttpUrl, ValidationError
 
 from schemas import VPMPackage, VPMPackageIndex, VPMRepository
@@ -92,5 +93,5 @@ if __name__ == "__main__":
     logger.debug(vpm_repo.model_dump_json(indent=2))
     output_path = (project_dir / sys.argv[1]).resolve()
     with open(output_path, "w") as f:
-        f.write(vpm_repo.model_dump_json(indent=2))
+        json.dump(vpm_repo.model_dump(mode="json"), f, indent=2, sort_keys=True)
     logger.info(f"Updated VPM repository is {output_path}")
