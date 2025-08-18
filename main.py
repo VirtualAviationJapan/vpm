@@ -1,10 +1,46 @@
 import sys
 from pathlib import Path
-from loguru import logger
+import hashlib
+import zipfile
 
-from pydantic import ValidationError, HttpUrl
+import httpx
+from loguru import logger
+from pydantic import HttpUrl, ValidationError
 
 from schemas import VPMPackage, VPMPackageIndex, VPMRepository
+
+
+def check_zip_file(pkg: VPMPackage) -> bool:
+    # download zip file
+    r = httpx.get(str(pkg.url), follow_redirects=True)
+    if r.status_code >= 400:
+        logger.error(f"Failed to download {pkg.url}: {r.status_code}")
+        return False
+    # save as zip file
+    zip_path = (
+        Path(__file__).resolve().parent / "packages" / f"{pkg.name}-{pkg.version}.zip"
+    )
+    with zip_path.open("wb") as f:
+        f.write(r.content)
+    # zip file check
+    if not zipfile.is_zipfile(zip_path):
+        logger.error(f"Invalid zip file: {zip_path}")
+        return False
+    # delete zip file
+    zip_path.unlink(missing_ok=True)
+
+    # hash check
+    sha256sum = hashlib.sha256(r.content).hexdigest()
+    if pkg.zipSHA256 is None:
+        logger.warning(f"No SHA256 provided for {pkg.url}, filling with {sha256sum}")
+        pkg.zipSHA256 = sha256sum
+    elif pkg.zipSHA256 != sha256sum:
+        logger.error(f"Hash mismatch for {pkg.url}: {pkg.zipSHA256} != {sha256sum}")
+        return False
+    else:
+        logger.debug(f"Hash match for {pkg.url}: {pkg.zipSHA256} == {sha256sum}")
+
+    return True
 
 
 def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
@@ -17,11 +53,12 @@ def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
             except ValidationError as e:
                 logger.error(f"Error validating {pkg_latest_path}: {str(e)}")
                 sys.exit(1)
-            else:
-                logger.debug(
-                    f"Found package: {pkg_latest.name}@{pkg_latest.version} in {pkg_latest_path}"
-                )
-                latest_packages.append(pkg_latest)
+            logger.debug(
+                f"Found package: {pkg_latest.name}@{pkg_latest.version} in {pkg_latest_path}"
+            )
+            if not check_zip_file(pkg_latest):
+                sys.exit(1)
+            latest_packages.append(pkg_latest)
 
     return latest_packages
 
