@@ -2,9 +2,11 @@ from typing import Dict, Optional
 from pydantic import BaseModel, HttpUrl, ConfigDict, model_validator
 from loguru import logger
 
+
 class Author(BaseModel):
     name: str
     email: Optional[str]
+    url: Optional[HttpUrl]
 
 
 class VPMPackage(BaseModel):
@@ -60,12 +62,12 @@ class VPMPackageIndex(BaseModel):
         return self
 
     def add_version(self, package: VPMPackage):
-        assert (
-            package.version not in self.versions
-        ), f"Version {package.version} already exists in index"
-        assert (
-            package.name == next(iter(self.versions.values())).name
-        ), "Package name must match existing versions"
+        assert package.version not in self.versions, (
+            f"Version {package.version} already exists in index"
+        )
+        assert package.name == next(iter(self.versions.values())).name, (
+            "Package name must match existing versions"
+        )
         logger.debug(f"Adding version {package.version} to package {package.name}")
         self.versions[package.version] = package
 
