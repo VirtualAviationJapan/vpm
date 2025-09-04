@@ -93,5 +93,5 @@ if __name__ == "__main__":
     logger.debug(vpm_repo.model_dump_json(indent=2))
     output_path = (project_dir / sys.argv[1]).resolve()
     with open(output_path, "w") as f:
-        json.dump(vpm_repo.model_dump(mode="json"), f, indent=2, sort_keys=True)
+        json.dump(vpm_repo.model_dump(mode="json",exclude_none=True), f, indent=2, sort_keys=True)
     logger.info(f"Updated VPM repository is {output_path}")
