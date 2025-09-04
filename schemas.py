@@ -5,8 +5,8 @@ from loguru import logger
 
 class Author(BaseModel):
     name: str
-    email: Optional[str]
-    url: Optional[HttpUrl]
+    email: Optional[str] = None
+    url: Optional[HttpUrl] = None
 
 
 class VPMPackage(BaseModel):

@@ -13,10 +13,8 @@
           "bugs": {
             "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/issues"
           },
-          "changelogUrl": null,
           "description": "Simplified radio communication system for VRChat Udon worlds.",
           "displayName": "Udon Radio Communications Redux",
-          "documentationUrl": null,
           "homepage": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux#readme",
           "license": "MIT",
           "name": "jp.virtualaviation.urc-redux",
@@ -43,10 +41,8 @@
           "bugs": {
             "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/issues"
           },
-          "changelogUrl": null,
           "description": "Simplified radio communication system for VRChat Udon worlds.",
           "displayName": "Udon Radio Communications Redux Saccflight Addon",
-          "documentationUrl": null,
           "homepage": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux#readme",
           "license": "MIT",
           "name": "jp.virtualaviation.urc-redux-sf",
