@@ -48,10 +48,10 @@
             "url": "git+https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux.git"
           },
           "unity": "2022.3",
-          "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/releases/download/v0.1.0/jp.virtualaviation.urc-redux-0.1.0.zip",
+          "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/releases/download/v0.1.1/jp.virtualaviation.udon-radio-communications-redux-0.1.1.zip",
           "version": "0.1.1",
           "vpmDependencies": {},
-          "zipSHA256": "8999d26dd4e0ad172d5e9ec9ac12db73d597c5ad3dd1060463432fb717c2a017"
+          "zipSHA256": "84fde7af6e0602f340f469ee451a3015dc1f06c368b3a40086d7c23f23f5a86d"
         }
       }
     },
@@ -102,12 +102,12 @@
             "url": "git+https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux.git"
           },
           "unity": "2022.3",
-          "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/releases/download/v0.1.0/jp.virtualaviation.urc-redux-sf-0.1.0.zip",
+          "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/releases/download/v0.1.1/jp.virtualaviation.udon-radio-communications-redux-sf-0.1.1.zip",
           "version": "0.1.1",
           "vpmDependencies": {
-            "jp.virtualaviation.urc-redux": "0.1.0"
+            "jp.virtualaviation.urc-redux": "0.1.1"
           },
-          "zipSHA256": "bd4af49fee6219b32e26946eb856c8eb550e47635ecc735a864be41b34954892"
+          "zipSHA256": "d43bb0ec4bf200a14ee7070ac1fc42b505994a14f135b8a91092693ff66b5574"
         }
       }
     }
