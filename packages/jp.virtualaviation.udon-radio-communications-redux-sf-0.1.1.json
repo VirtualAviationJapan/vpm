@@ -1,0 +1,25 @@
+{
+  "name": "jp.virtualaviation.urc-redux-sf",
+  "displayName": "Udon Radio Communications Redux Saccflight Addon",
+  "version": "0.1.1",
+  "private": false,
+  "description": "Simplified radio communication system for VRChat Udon worlds.",
+  "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/releases/download/v0.1.0/jp.virtualaviation.urc-redux-sf-0.1.0.zip",
+  "homepage": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux#readme",
+  "bugs": {
+    "url": "https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "VirtualAviationJapan",
+    "email": "41898282+github-actions[bot]@users.noreply.github.com"
+  },
+  "unity": "2022.3",
+  "vpmDependencies": {
+    "jp.virtualaviation.urc-redux": "0.1.0"
+  }
+}
