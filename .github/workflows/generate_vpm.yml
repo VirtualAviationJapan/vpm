@@ -15,6 +15,6 @@ jobs:
           ref: ${{ github.head_ref }}
       - uses: astral-sh/setup-uv@v7
       - run: uv run main.py vpm.json
-      - uses: stefanzweifel/git-auto-commit-action@v6
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'chore: update vpm.json'
