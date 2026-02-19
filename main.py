@@ -66,10 +66,10 @@ def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
 
 def generate_vpm_repo(
     pkg_dir: Path,
-    author: str = "VirtualAviationJapan",
-    name: str = "VirtualAviationJapan",
-    id: str = "jp.virtualaviation",
-    url: HttpUrl = HttpUrl("https://virtualaviationjapan.github.io/vpm/vpm.json"),
+    author: str,
+    id: str,
+    name: str,
+    url: HttpUrl,
 ) -> VPMRepository:
     vpm = VPMRepository(author=author, name=name, id=id, url=url, packages={})
     latest_packages = read_latest_packages(pkg_dir)
@@ -83,15 +83,28 @@ def generate_vpm_repo(
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        logger.error("Usage: uv run main.py <output>")
+    if len(sys.argv) < 6:
+        logger.error("Usage: uv run main.py <author> <id> <name> <url> <output>")
         logger.error("output are relative to the project directory")
         sys.exit(1)
     project_dir = Path(__file__).resolve().parent
+    (author, id, name, url, out_path) = (
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        HttpUrl(sys.argv[4]),
+        sys.argv[5],
+    )
 
-    vpm_repo = generate_vpm_repo(project_dir / "packages")
+    vpm_repo = generate_vpm_repo(project_dir / "packages", author, id, name, url)
     logger.debug(vpm_repo.model_dump_json(indent=2))
-    output_path = (project_dir / sys.argv[1]).resolve()
+
+    output_path = (project_dir / out_path).resolve()
     with open(output_path, "w") as f:
-        json.dump(vpm_repo.model_dump(mode="json",exclude_none=True), f, indent=2, sort_keys=True)
+        json.dump(
+            vpm_repo.model_dump(mode="json", exclude_none=True),
+            f,
+            indent=2,
+            sort_keys=True,
+        )
     logger.info(f"Updated VPM repository is {output_path}")
