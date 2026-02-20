@@ -26,7 +26,7 @@ def get_zip_hash_from_github(url: HttpUrl) -> Optional[str]:
     asset_hash = {
         HttpUrl(asset.browser_download_url): asset.digest for asset in release.assets
     }[url]
-
+    logger.debug(f"GitHub release asset {url} has hash {asset_hash}")
     if asset_hash is None:
         return None
     else:
