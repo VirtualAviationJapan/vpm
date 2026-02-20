@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "httpx>=0.28.1",
     "loguru>=0.7.3",
     "pydantic>=2.11.7",
+    "pygithub>=2.8.1",
 ]

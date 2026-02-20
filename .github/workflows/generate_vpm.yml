@@ -6,15 +6,27 @@ on:
 permissions:
   contents: write
 
+env:
+  vpm_repo_author: VirtualAviationJapan
+  vpm_repo_id: jp.virtualaviation
+  vpm_repo_name: VirtualAviationJapan
+  vpm_repo_url: https://virtualaviationjapan.github.io/vpm/vpm.json
+
 jobs:
   generate:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
       - uses: astral-sh/setup-uv@v7
-      - run: uv run main.py vpm.json
+      - run: >
+          uv run main.py
+          ${{ env.vpm_repo_author}}
+          ${{ env.vpm_repo_id }}
+          ${{ env.vpm_repo_name }}
+          ${{ env.vpm_repo_url}}
+          vpm.json
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          commit_message: 'chore: update vpm.json'
+          commit_message: "chore: update vpm.json"
