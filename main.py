@@ -23,14 +23,19 @@ def get_zip_hash_from_github(url: HttpUrl) -> Optional[str]:
     g = Github()
     repo = g.get_repo(f"{repo_owner}/{repo_name}")
     release = repo.get_release(release_tag)
-    asset_hash = {
+    asset_hash: Optional[str] = {
         HttpUrl(asset.browser_download_url): asset.digest for asset in release.assets
     }[url]
     logger.debug(f"GitHub release asset {url} has hash {asset_hash}")
     if asset_hash is None:
         return None
     else:
-        return asset_hash.removeprefix("sha256:")
+        hash_ret: str = asset_hash.removeprefix("sha256:")
+        if hash_ret.startswith("sha256:"):
+            logger.warning(f"Unexpected hash format: {asset_hash}")
+            return None
+        else:
+            return hash_ret.removeprefix("sha256:")
 
 
 def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
