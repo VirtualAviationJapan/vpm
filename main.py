@@ -58,6 +58,7 @@ def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
                         f"zipSHA256 is empty in {pkg_latest.name}@{pkg_latest.version}"
                     )
                 else:
+                    pkg_latest.zipSHA256 = hash
                     logger.info(
                         f"zipSHA256 is appended into {pkg_latest.name}@{pkg_latest.version}"
                     )
