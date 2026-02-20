@@ -1,47 +1,36 @@
+import json
+import re
 import sys
 from pathlib import Path
-import hashlib
-import zipfile
+from typing import Optional
 
-import httpx
+from github import Github
 from loguru import logger
-import json
 from pydantic import HttpUrl, ValidationError
 
 from schemas import VPMPackage, VPMPackageIndex, VPMRepository
 
 
-def check_zip_file(pkg: VPMPackage) -> bool:
-    # download zip file
-    r = httpx.get(str(pkg.url), follow_redirects=True)
-    if r.status_code >= 400:
-        logger.error(f"Failed to download {pkg.url}: {r.status_code}")
-        return False
-    # save as zip file
-    zip_path = (
-        Path(__file__).resolve().parent / "packages" / f"{pkg.name}-{pkg.version}.zip"
+def get_zip_hash_from_github(url: HttpUrl) -> Optional[str]:
+    m = re.match(
+        r"^https?://github\.com/(.*)/(.*)/releases/download/(.*)/.*$", str(url)
     )
-    with zip_path.open("wb") as f:
-        f.write(r.content)
-    # zip file check
-    if not zipfile.is_zipfile(zip_path):
-        logger.error(f"Invalid zip file: {zip_path}")
-        return False
-    # delete zip file
-    zip_path.unlink(missing_ok=True)
+    if m is None:
+        logger.warning(f"{url} is not a GitHub release!")
+        return None
 
-    # hash check
-    sha256sum = hashlib.sha256(r.content).hexdigest()
-    if pkg.zipSHA256 is None:
-        logger.warning(f"No SHA256 provided for {pkg.url}, filling with {sha256sum}")
-        pkg.zipSHA256 = sha256sum
-    elif pkg.zipSHA256 != sha256sum:
-        logger.error(f"Hash mismatch for {pkg.url}: {pkg.zipSHA256} != {sha256sum}")
-        return False
+    repo_owner, repo_name, release_tag = m.groups()
+    g = Github()
+    repo = g.get_repo(f"{repo_owner}/{repo_name}")
+    release = repo.get_release(release_tag)
+    asset_hash = {
+        HttpUrl(asset.browser_download_url): asset.digest for asset in release.assets
+    }[url]
+
+    if asset_hash is None:
+        return None
     else:
-        logger.debug(f"Hash match for {pkg.url}: {pkg.zipSHA256} == {sha256sum}")
-
-    return True
+        return asset_hash.removeprefix("sha256:")
 
 
 def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
@@ -57,8 +46,16 @@ def read_latest_packages(search_dir: Path) -> list[VPMPackage]:
             logger.debug(
                 f"Found package: {pkg_latest.name}@{pkg_latest.version} in {pkg_latest_path}"
             )
-            if not check_zip_file(pkg_latest):
-                sys.exit(1)
+            if pkg_latest.zipSHA256 is None:
+                hash = get_zip_hash_from_github(pkg_latest.url)
+                if hash is None:
+                    logger.warning(
+                        f"zipSHA256 is empty in {pkg_latest.name}@{pkg_latest.version}"
+                    )
+                else:
+                    logger.info(
+                        f"zipSHA256 is appended into {pkg_latest.name}@{pkg_latest.version}"
+                    )
             latest_packages.append(pkg_latest)
 
     return latest_packages
