@@ -17,6 +17,19 @@
           "version": "1.8.0",
           "vpmDependencies": {},
           "zipSHA256": "b4852dfac74c798cde086a28049c0f18afc101e7420c5ea2e541a5b2ce9cf066"
+        },
+        "1.8.1": {
+          "author": {
+            "name": "Sacchan",
+            "url": "https://github.com/Sacchan-VRC/SaccFlightAndVehicles"
+          },
+          "description": "Sacc's package for VRChat containing avatar flight and vehicles. Making your own vehicles requires good knowledge of Unity. Check Instructions.txt and the wiki for more info.",
+          "displayName": "SaccFlightAndVehicles",
+          "name": "io.github.sacchan-vrc.sacc-flight-and-vehicles",
+          "url": "https://github.com/VirtualAviationJapan/saccflight-deploy-ci/releases/download/v1.8.1/io.github.sacchan-vrc.sacc-flight-and-vehicles-1.8.1.zip",
+          "version": "1.8.1",
+          "vpmDependencies": {},
+          "zipSHA256": "5fb0b2b35bace6c25c21d2b1a2cdaf99e2b676669d12185dc9b66ea8ca1e5dc0"
         }
       }
     },
