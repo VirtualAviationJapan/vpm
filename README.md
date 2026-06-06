@@ -13,6 +13,7 @@ or, if you have VRChat Creator Companion, [Click here](https://vpm.virtualaviati
 
 ## Packages
 + [UdonRadioCommunication-Redux](https://github.com/VirtualAviationJapan/UdonRadioCommunications-Redux)
++ [SaccFlightAndVehicles (unofficial distribution)](https://github.com/Sacchan-VRC/SaccFlightAndVehicles)
 
 ## workflow
 1. Create a pull request to add new package manifest into `/packages`
