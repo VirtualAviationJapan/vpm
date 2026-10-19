@@ -6,6 +6,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "loguru>=0.7.3",
-    "pydantic>=2.14.0",
+    "pydantic>=2.14.1",
     "pygithub>=2.10.0",
 ]
